@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
+import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -18,14 +19,14 @@ import java.util.Map;
  * @author lixiangqian
  * @date 2019-07-26 11:17
  **/
-//@Import(FeignAutoConfiguration.class)
+@Import(FeignAutoConfiguration.class)
 @Configuration()
 @ConfigurationProperties(prefix = "feign.httpclient")
 public class FeignConfig {
 
     @Setter
     @Getter
-    private Map<String, String> headers;
+    private Map<String, Collection<String>> headers;
 
     @Bean
     public Retryer feignRetry() {
@@ -42,6 +43,6 @@ public class FeignConfig {
 
     @Bean
     public RequestInterceptor baseCommonHeaderRequestInterceptor() {
-        return template -> headers.entrySet().forEach(entry -> template.header(entry.getKey(), entry.getValue()));
+        return template -> template.headers(headers);
     }
 }
