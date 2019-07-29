@@ -1,6 +1,7 @@
 package com.lixq.springdemo.config;
 
 import com.google.common.base.Charsets;
+import feign.Logger;
 import feign.RequestInterceptor;
 import feign.RetryableException;
 import feign.Retryer;
@@ -8,6 +9,7 @@ import feign.auth.BasicAuthRequestInterceptor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.openfeign.FeignAutoConfiguration;
@@ -28,14 +30,9 @@ import static java.util.concurrent.TimeUnit.SECONDS;
  **/
 @Import(FeignAutoConfiguration.class)
 @Configuration()
-@ConfigurationProperties(prefix = "feign.httpclient")
+@ConfigurationProperties(prefix = "feign")
+@Slf4j
 public class FeignConfig {
-
-    @Setter//超时时间
-    public  int connectTimeOutMillis = 12000;
-
-    @Setter
-    public  int readTimeOutMillis = 12000;
 
     @Setter
     private Map<String, Collection<String>> headers;
@@ -43,30 +40,53 @@ public class FeignConfig {
     @Setter
     private RetryPolicy retry;
 
-
     @Setter
     private BasicAuthConfig basicAuth;
 
+    @Setter
+    private String logLevel = Logger.Level.NONE.name();
 
+    /**
+     * 请求日志打印配置，需配置com.lixq.springdemo.call.xx 日志级别为debug
+     *
+     * @return
+     */
+    @Bean
+    public Logger.Level feignLoggerLevel() {
+        try {
+            return Logger.Level.valueOf(logLevel);
+        } catch (Exception ex) {
+            log.error("logLevel is error: {}", logLevel);
+            return Logger.Level.NONE;
+        }
+    }
+
+    /**
+     * 基础认证配置
+     *
+     * @return
+     */
     @Bean
     @ConditionalOnProperty(name = "basicAuth.enabled", havingValue = "true", matchIfMissing = false)
     public RequestInterceptor basicAuthRequestInterceptor() {
-        //认证用
         return new BasicAuthRequestInterceptor(basicAuth.username, basicAuth.password, Charsets.UTF_8);
     }
 
-    @Data
-    public static class BasicAuthConfig {
-        private String username;
-        private String password;
-    }
-
-
+    /**
+     * 请求头配置
+     *
+     * @return
+     */
     @Bean
     public RequestInterceptor baseCommonHeaderRequestInterceptor() {
         return template -> template.headers(headers);
     }
 
+    /**
+     * 重试配置
+     *
+     * @return
+     */
     @Bean
     public Retryer feignRetry() {
         if (retry == null || retry.enabled == false) {
@@ -74,6 +94,14 @@ public class FeignConfig {
         }
         return this.retry;
     }
+
+
+    @Data
+    public static class BasicAuthConfig {
+        private String username;
+        private String password;
+    }
+
 
     @NoArgsConstructor
     public static class RetryPolicy implements Retryer {
