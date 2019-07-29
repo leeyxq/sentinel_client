@@ -29,6 +29,8 @@ feign:
 
   httpclient:
     enabled: true
+    readTimeOutMillis: 10000
+    connectTimeOutMillis: 10000
     maxConnections: 1024
     maxConnectionsPerRoute: 512
     timeToLive: 600

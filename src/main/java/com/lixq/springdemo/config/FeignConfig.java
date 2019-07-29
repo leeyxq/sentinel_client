@@ -31,6 +31,12 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 @ConfigurationProperties(prefix = "feign.httpclient")
 public class FeignConfig {
 
+    @Setter//超时时间
+    public  int connectTimeOutMillis = 12000;
+
+    @Setter
+    public  int readTimeOutMillis = 12000;
+
     @Setter
     private Map<String, Collection<String>> headers;
 
