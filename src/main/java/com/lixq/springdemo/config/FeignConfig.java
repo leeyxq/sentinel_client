@@ -1,6 +1,7 @@
 package com.lixq.springdemo.config;
 
 import com.google.common.base.Charsets;
+import feign.Request;
 import feign.RequestInterceptor;
 import feign.RetryableException;
 import feign.Retryer;
@@ -53,6 +54,11 @@ public class FeignConfig {
     public RequestInterceptor basicAuthRequestInterceptor() {
         //认证用
         return new BasicAuthRequestInterceptor(basicAuth.username, basicAuth.password, Charsets.UTF_8);
+    }
+
+    @Bean
+    public Request.Options options() {
+        return new Request.Options(connectTimeOutMillis, readTimeOutMillis);
     }
 
     @Data
