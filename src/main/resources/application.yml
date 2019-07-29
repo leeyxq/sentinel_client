@@ -13,11 +13,12 @@ spring:
     sentinel:
       transport:
         port: 8081
-        dashboard: localhost:8088
+        dashboard: localhost:8080
       log:
         switch-pid: true
-      zkHost: localhost:2181
-      zkRootPath: /sentinel_rule
+      zk:
+        zkHost: 192.168.28.154:218
+        zkRootPath: /sentinel_rule
 
 server:
   port: 9080
