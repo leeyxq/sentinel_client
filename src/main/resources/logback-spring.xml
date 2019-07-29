@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <include resource="org/springframework/boot/logging/logback/base.xml" />
-    <property name="FILE_LOG_PATTERN" value="${FILE_LOG_PATTERN:-%d{yyyy-MM-dd HH:mm:ss.SSS} ${LOG_LEVEL_PATTERN:-%5p} ${PID:- } --- [%t] %-40.40logger{39} : %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}}"/>
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+    <property name="FILE_LOG_PATTERN"
+              value="${FILE_LOG_PATTERN:-%d{yyyy-MM-dd HH:mm:ss.SSS} ${LOG_LEVEL_PATTERN:-%5p} ${PID:- } --- [%t] %-40.40logger{39} : %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}}"/>
 
 
     <!--将info级别日志写入文件-->
-    <appender name="fileInfoLog"  class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <appender name="fileInfoLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>logs/info.log</file>
         <!--过滤器过滤高于info级别的日志-->
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
@@ -13,7 +14,7 @@
             <onMatch>DENY</onMatch>
             <onMismatch>ACCEPT</onMismatch>
         </filter>
-        <encoder  class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <pattern>${FILE_LOG_PATTERN}</pattern>
             <charset>UTF-8</charset>
         </encoder>
@@ -35,7 +36,7 @@
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>ERROR</level>
         </filter>
-        <encoder  class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <pattern>${FILE_LOG_PATTERN}</pattern>
             <charset>UTF-8</charset>
         </encoder>
@@ -55,8 +56,9 @@
     <!-- 开发环境 -->
     <springProfile name="dev">
         <logger name="org.springframework.web" level="INFO"/>
-        <logger name="org.apache.http" level="DEBUG" />
-        <logger name="com.lixq.springdemo" level="DEBUG" />
+        <!--开启更详细的请求日志-->
+        <!--         <logger name="org.apache.http" level="DEBUG" />-->
+        <logger name="com.lixq.springdemo" level="DEBUG"/>
         <root level="INFO">
             <appender-ref ref="fileInfoLog"/>
             <appender-ref ref="fileErrorLog"/>
@@ -66,7 +68,7 @@
     <!-- 测试环境 -->
     <springProfile name="test">
         <logger name="org.springframework.web" level="INFO"/>
-        <logger name="com.lixq.springdemo" level="INFO" />
+        <logger name="com.lixq.springdemo" level="INFO"/>
         <root level="INFO">
             <appender-ref ref="fileInfoLog"/>
             <appender-ref ref="fileErrorLog"/>
@@ -76,7 +78,7 @@
     <!-- 生产环境 -->
     <springProfile name="pub">
         <logger name="org.springframework.web" level="ERROR"/>
-        <logger name="com.lixq.springdemo" level="ERROR" />
+        <logger name="com.lixq.springdemo" level="ERROR"/>
         <root level="WARN">
             <appender-ref ref="fileInfoLog"/>
             <appender-ref ref="fileErrorLog"/>
